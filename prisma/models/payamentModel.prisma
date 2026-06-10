@@ -1,0 +1,16 @@
+model Payment {
+  id             String        @id @default(cuid())
+  bookingId      String
+  amount         Float
+  transactionId  String?       @unique
+  status         PaymentStatus @default(PENDING)
+  booking         Booking      @relation(fields: [bookingId], references: [id])
+  createdAt      DateTime      @default(now())
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}

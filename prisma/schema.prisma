@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  userId      String
+  hallId      String
+  eventDate   DateTime
+  totalAmount Float
+  status      BookingStatus @default(PENDING)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  hall        Hall          @relation(fields: [hallId], references: [id])
+  user        User          @relation(fields: [userId], references: [id])
+  payments    Payment[]
+}
+
+model HallImage {
+  id        String   @id @default(cuid())
+  hallId    String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  hall      Hall     @relation(fields: [hallId], references: [id])
+}
+
+model Hall {
+  id            String      @id @default(cuid())
+  name          String
+  description   String?
+  address       String
+  city          String
+  state         String
+  pincode       String
+  latitude      Float?
+  longitude     Float?
+  capacity      Int
+  pricePerDay   Float
+  contactNumber String
+  email         String?
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  bookings      Booking[]
+  images        HallImage[]
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  bookingId     String
+  amount        Float
+  transactionId String?       @unique
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  booking       Booking       @relation(fields: [bookingId], references: [id])
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  createdAt    DateTime  @default(now())
+  passwordHash String
+  updatedAt    DateTime  @updatedAt
+  bookings     Booking[]
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}

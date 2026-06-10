@@ -1,0 +1,20 @@
+model Booking {
+  id            String        @id @default(cuid())
+  userId        String
+  hallId        String
+  eventDate     DateTime
+  totalAmount   Float
+  status        BookingStatus @default(PENDING)
+  user          User          @relation(fields: [userId], references: [id])
+  hall          Hall          @relation(fields: [hallId], references: [id])
+  payments      Payment[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}

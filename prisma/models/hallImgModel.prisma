@@ -1,0 +1,7 @@
+model HallImage {
+  id          String    @id @default(cuid())
+  hallId      String
+  imageUrl    String
+  hall        Hall      @relation(fields: [hallId], references: [id])
+  createdAt   DateTime  @default(now())
+}
